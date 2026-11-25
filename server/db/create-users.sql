@@ -1,5 +1,4 @@
--- Create login accounts. Edit the emails/passwords, then run:
---   npm run sql -- db/create-users.sql
+-- Create login accounts. Edit the emails/passwords, then paste into the Neon SQL Editor.
 -- Emails must be lowercase. Passwords are bcrypt-hashed by crypt().
 
 -- Admin (safe to re-run: an account that already exists is left unchanged;
@@ -11,7 +10,7 @@ ON CONFLICT (email) DO NOTHING;
 -- Employee: the employee row must exist first (link by employee_no)
 -- INSERT INTO app_user (email, password_hash, role, employee_id)
 -- SELECT 'juan@example.com', crypt('change-me-too', gen_salt('bf', 10)), 'employee', employee_id
---   FROM employee WHERE employee_no = 'EMP001';
+--   FROM employees WHERE employee_no = 'EMP001';
 
 -- Reset a password
 -- UPDATE app_user SET password_hash = crypt('new-password', gen_salt('bf', 10))

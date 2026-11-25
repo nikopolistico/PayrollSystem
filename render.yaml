@@ -1,24 +1,16 @@
 # Render Blueprint: Render → New → Blueprint → pick this repo.
-# Creates the PostgreSQL database and one web service (API + built Vue app).
-databases:
-  - name: rcja-payroll-db
-    databaseName: payroll
-    region: singapore # closest to PH; must match the web service
-    plan: free
-
+# Creates one web service (API + built Vue app). The database is on Neon.
 services:
   - type: web
     name: rcja-payroll
     runtime: node
-    region: singapore
+    region: singapore # closest to PH
     plan: free
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /login
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: rcja-payroll-db
-          property: connectionString # Internal URL, no SSL needed
+        sync: false # paste your Neon connection string in the Render dashboard
       - key: SESSION_SECRET
         generateValue: true

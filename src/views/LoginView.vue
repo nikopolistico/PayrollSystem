@@ -22,143 +22,88 @@ async function submit() {
 </script>
 
 <template>
-  <main class="page">
-    <form class="card" @submit.prevent="submit">
-      <h1>Payroll System</h1>
-      <p class="subtitle">Sign in to your account</p>
+  <main class="grid min-h-dvh place-items-center px-4 py-10">
+    <div class="w-full max-w-sm">
+      <p class="flex items-center gap-3 text-lg font-bold tracking-tight">
+        <span
+          class="grid size-10 place-items-center rounded-lg bg-ledger text-xl text-white"
+          aria-hidden="true"
+          >₱</span
+        >
+        Payroll System
+      </p>
 
-      <fieldset class="roles">
-        <legend class="sr-only">Sign in as</legend>
-        <label :class="{ active: role === 'employee' }">
-          <input v-model="role" type="radio" value="employee" @change="error = ''" />
-          Employee
+      <form
+        class="mt-4 grid gap-5 rounded-lg border border-rule border-t-4 border-t-ledger bg-sheet p-6 md:p-8"
+        @submit.prevent="submit"
+      >
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Sign in</h1>
+          <p class="mt-1 text-sm text-muted">Use the email your HR office registered.</p>
+        </div>
+
+        <fieldset
+          class="grid grid-cols-2 gap-1 rounded-md bg-paper p-1 ring-1 ring-rule ring-inset"
+        >
+          <legend class="sr-only">Sign in as</legend>
+          <label
+            v-for="option in [
+              { value: 'employee', label: 'Employee' },
+              { value: 'admin', label: 'Admin' },
+            ]"
+            :key="option.value"
+            class="cursor-pointer rounded px-3 py-2 text-center text-sm font-semibold text-muted has-checked:bg-sheet has-checked:text-ink has-checked:shadow-sm has-focus-visible:outline-2 has-focus-visible:outline-ledger"
+          >
+            <input
+              v-model="role"
+              type="radio"
+              :value="option.value"
+              class="sr-only"
+              @change="error = ''"
+            />
+            {{ option.label }}
+          </label>
+        </fieldset>
+
+        <label class="grid gap-1.5 text-sm font-medium">
+          Email
+          <input
+            v-model="email"
+            type="email"
+            required
+            autocomplete="username"
+            class="rounded-md border border-rule px-3 py-2.5 text-base focus:border-ledger"
+          />
         </label>
-        <label :class="{ active: role === 'admin' }">
-          <input v-model="role" type="radio" value="admin" @change="error = ''" />
-          Admin
+
+        <label class="grid gap-1.5 text-sm font-medium">
+          Password
+          <input
+            v-model="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            class="rounded-md border border-rule px-3 py-2.5 text-base focus:border-ledger"
+          />
         </label>
-      </fieldset>
 
-      <label class="field">
-        Email
-        <input v-model="email" type="email" required autocomplete="username" />
-      </label>
+        <p v-if="error" class="text-sm text-debit" role="alert">{{ error }}</p>
 
-      <label class="field">
-        Password
-        <input v-model="password" type="password" required autocomplete="current-password" />
-      </label>
+        <button
+          type="submit"
+          :disabled="loading"
+          class="rounded-md bg-ledger px-4 py-3 font-semibold text-white hover:bg-ledger-dark disabled:cursor-wait disabled:opacity-60"
+        >
+          {{ loading ? 'Signing in…' : `Sign in as ${role}` }}
+        </button>
+      </form>
 
-      <p v-if="error" class="error" role="alert">{{ error }}</p>
-
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Signing in…' : `Sign in as ${role === 'admin' ? 'Admin' : 'Employee'}` }}
-      </button>
-    </form>
+      <p class="mt-5 text-center text-sm text-muted">
+        Recording attendance?
+        <RouterLink to="/attendance" class="font-semibold text-ledger hover:underline">
+          Open the attendance portal
+        </RouterLink>
+      </p>
+    </div>
   </main>
 </template>
-
-<style scoped>
-.page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: #f1f5f9;
-}
-.card {
-  width: 100%;
-  max-width: 380px;
-  background: #fff;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgb(15 23 42 / 0.08);
-  display: grid;
-  gap: 16px;
-}
-h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #0f172a;
-}
-.subtitle {
-  margin: -12px 0 0;
-  color: #64748b;
-}
-.roles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
-  margin: 0;
-  border: 0;
-  border-radius: 8px;
-  background: #e2e8f0;
-}
-.roles label {
-  text-align: center;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #475569;
-  font-weight: 500;
-}
-.roles label.active {
-  background: #fff;
-  color: #0f172a;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.1);
-}
-.roles label:has(input:focus-visible) {
-  outline: 2px solid #2563eb;
-}
-.roles input {
-  position: absolute;
-  opacity: 0;
-}
-.field {
-  display: grid;
-  gap: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #334155;
-}
-.field input {
-  padding: 10px 12px;
-  font-size: 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-}
-.field input:focus {
-  outline: 2px solid #2563eb;
-  border-color: transparent;
-}
-.error {
-  margin: 0;
-  color: #b91c1c;
-  font-size: 0.875rem;
-}
-button {
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  background: #2563eb;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button:hover {
-  background: #1d4ed8;
-}
-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-</style>
